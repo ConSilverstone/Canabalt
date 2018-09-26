@@ -19,7 +19,7 @@ public:
 	//Get a sound buffer based on file name
 	static sf::SoundBuffer& GetSoundBuffer(std::string _fileName);
 	//Get a font based on file name
-	////static sf::Font& GetFont(std::string _fileName);
+	static sf::Font& GetFont(std::string _fileName);
 
 private:
 	//Private data for this class//
