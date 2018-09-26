@@ -17,7 +17,10 @@ Animation::Animation()
 
 void Animation::Update(sf::Time _frameTime)
 {
-	// Is it time to change to a new frame?
+	//Only process the animation if it is playing
+	if (m_playing)
+	{
+		// Is it time to change to a new frame?
 	m_nextFrameChange -= _frameTime;
 	if (m_nextFrameChange.asSeconds() <= 0)
 	{
@@ -31,10 +34,24 @@ void Animation::Update(sf::Time _frameTime)
 		{
 			// We did reach the end!
 
-			//TODO: What if no loop?
+			// Should we loop
+			if (m_loop)
+			{
+				// We SHOULD loop
+				// Wrap around to the begining
+				m_currentFrame = 0;
+			}
+			else 
+			{
+				// We should NOT loop
 
-			//Wrap around to the begining
-			m_currentFrame = 0;
+				// Set our current frame as the last in the list
+				m_currentFrame = m_frames.size() - 1;
+
+				// stop playback
+				m_playing = false;
+			}
+
 		}
 
 		//Does this sprite exist
@@ -47,6 +64,47 @@ void Animation::Update(sf::Time _frameTime)
 		float timeToChange = 1.0f / m_playBackSpeed;
 		m_nextFrameChange = sf::seconds(timeToChange);
 	}
+	}
+}
+
+void Animation::Play()
+{
+	// Update our sprite to the current frame immediently
+	if (m_sprite)
+	{
+		m_sprite->setTexture(*m_frames[m_currentFrame]);
+	}
+
+	// Only start playing and set next frame time IF playback speed is not zero
+	if (m_playBackSpeed != 0)
+	{
+		// Set playback to true
+		m_playing = true;
+
+		// Determine time for next frame change
+		// Convert frames per second to seconds per frame
+		float timeToChange = 1.0f / m_playBackSpeed;
+		m_nextFrameChange = sf::seconds(timeToChange);
+	}
+}
+
+void Animation::Pause()
+{
+	//Stop payback BUT keep current frame
+	m_playing = false;
+}
+
+void Animation::Stop()
+{
+	//Stop payback AND reset to first frame
+	m_playing = false;
+	m_currentFrame = 0;
+}
+
+bool Animation::IsPlaying()
+{
+	// Tell the calling code if we are currently playing
+	return m_playing;
 }
 
 void Animation::AddFrame(sf::Texture& _newFrame)
@@ -57,4 +115,19 @@ void Animation::AddFrame(sf::Texture& _newFrame)
 void Animation::SetSprite(sf::Sprite& _sprite)
 {
 	m_sprite = &_sprite;
+}
+
+void Animation::SetPlayBackSpeed(float _framesPerSecond)
+{
+	m_playBackSpeed = _framesPerSecond;
+
+	// If the playback speed is zero,
+	// pause to protect from divide by zero error
+	if (m_playBackSpeed == 0)
+		Pause();
+}
+
+void Animation::SetLoop(bool _loop) 
+{
+	m_loop = _loop;
 }
