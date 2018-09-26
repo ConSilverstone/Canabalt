@@ -3,9 +3,10 @@
 #include "AssetManager.h"
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(200, 200), "Canabalt");
-	sf::CircleShape shape(100.f);
-	shape.setFillColor(sf::Color::Green);
+	// Render Window creation
+	sf::RenderWindow gameWindow;
+	gameWindow.create(sf::VideoMode::getDesktopMode(), "Whack A Critter!",
+		sf::Style::Titlebar | sf::Style::Close);
 
 	sf::Clock gameClock;
 
@@ -16,22 +17,23 @@ int main()
 	//Testing AssetManager
 	sf::Sprite testSprite;
 	testSprite.setTexture(AssetManager::GetTexture("graphics/playerJump.png"));
+	sf::Sound testSound;
+	testSound.setBuffer(AssetManager::GetSoundBuffer("audio/music.ogg"));
+	testSound.play();
 
-	while (window.isOpen())
+	while (gameWindow.isOpen())
 	{
 		sf::Event event;
-		while (window.pollEvent(event))
+		while (gameWindow.pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed)
-				window.close();
+				gameWindow.close();
 		}
-		window.clear();
+		gameWindow.clear();
 
 		// Draw Everything
-		window.draw(testSprite);
-
-		window.draw(shape);
-		window.display();
+		gameWindow.draw(testSprite);
+		gameWindow.display();
 	}
 
 	return 0;
