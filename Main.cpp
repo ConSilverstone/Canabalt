@@ -23,6 +23,9 @@ int main()
 	Player myPlayer;
 	myPlayer.Spawn();
 
+	// Create game camera
+	sf::View camera = gameWindow.getDefaultView();
+
 	//Testing AssetManager
 	sf::Sprite testSprite;
 	testSprite.setTexture(AssetManager::GetTexture("graphics/playerJump.png"));
@@ -63,6 +66,9 @@ int main()
 		// Process all game objects
 		myPlayer.Update(frameTime);
 
+		// Update camera position
+		camera.setCenter(myPlayer.GetPosition().x + camera.getSize().x * 0.4f, camera.getCenter().y);
+
 		// end update
 		// ----------
 
@@ -74,7 +80,13 @@ int main()
 		gameWindow.clear();
 
 		// Draw everything
+
+		// Draw the game world using the camera
+		gameWindow.setView(camera);
 		myPlayer.Draw(gameWindow);
+
+		// Draw the UI to the window
+		gameWindow.setView(gameWindow.getDefaultView());
 
 		// Display game contents
 		gameWindow.display();
