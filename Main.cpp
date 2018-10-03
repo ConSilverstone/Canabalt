@@ -1,7 +1,10 @@
 #include <SFML/Graphics.hpp>
+#include <cstdlib>
+#include <ctime>
 
 #include "AssetManager.h"
 #include "Player.h"
+#include "Platform.h"
 
 int main()
 {
@@ -19,12 +22,19 @@ int main()
 	//Create AssetManager
 	AssetManager assets;
 
+	// Seed random number generator
+	srand(time(NULL));
+
 	// Create player
 	Player myPlayer;
 	myPlayer.Spawn();
 
 	// Create game camera
 	sf::View camera = gameWindow.getDefaultView();
+
+	// Create Platforms
+	Platform myPlatform;
+	myPlatform.Spawn();
 
 	//Testing AssetManager
 	sf::Sprite testSprite;
@@ -84,6 +94,7 @@ int main()
 		// Draw the game world using the camera
 		gameWindow.setView(camera);
 		myPlayer.Draw(gameWindow);
+		myPlatform.Draw(gameWindow);
 
 		// Draw the UI to the window
 		gameWindow.setView(gameWindow.getDefaultView());
