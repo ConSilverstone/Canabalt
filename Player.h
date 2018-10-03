@@ -14,8 +14,10 @@ public:
 	Player();
 
 	void Input(sf::Event _gameEvent);
-	void Update(sf::Event _gameUpdate);
+	void Update(sf::Time _frameTime);
 	void Draw(sf::RenderTarget& _target);
+
+	void Spawn();
 
 private:
 

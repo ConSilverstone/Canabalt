@@ -1,8 +1,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "AssetManager.h"
-#include "Animation.h"
-#include "AnimationSystem.h"
+#include "Player.h"
 
 int main()
 {
@@ -20,6 +19,10 @@ int main()
 	//Create AssetManager
 	AssetManager assets;
 
+	// Create player
+	Player myPlayer;
+	myPlayer.Spawn();
+
 	//Testing AssetManager
 	sf::Sprite testSprite;
 	testSprite.setTexture(AssetManager::GetTexture("graphics/playerJump.png"));
@@ -32,21 +35,6 @@ int main()
 	testText.setFont(AssetManager::GetFont("fonts/mainFont.ttf"));
 	testText.setString("Test text.");
 
-	// Animation Testing Section
-	AnimationSystem testAnimationSystem;
-	testAnimationSystem.SetSprite(testSprite);
-
-	Animation& testAnimation = testAnimationSystem.CreateAnimation("run");
-	testAnimation.AddFrame(AssetManager::GetTexture("graphics/PlayerRun1.png"));
-	testAnimation.AddFrame(AssetManager::GetTexture("graphics/PlayerRun2.png"));
-	testAnimation.SetLoop(true);
-	testAnimation.SetPlayBackSpeed(10.0f);
-
-	Animation& jumpAnimation = testAnimationSystem.CreateAnimation("jump");
-	jumpAnimation.AddFrame(AssetManager::GetTexture("graphics/playerJump.png"));
-
-	testAnimationSystem.Play("run");
-
 	// end game setup
 	/////////////////
 
@@ -58,8 +46,13 @@ int main()
 		sf::Event event;
 		while (gameWindow.pollEvent(event))
 		{
+			// Pass input to game objects
+			myPlayer.Input(event);
+
 			if (event.type == sf::Event::Closed)
+			{
 				gameWindow.close();
+			} // End if (closed)
 		}
 		gameWindow.clear();
 
@@ -67,16 +60,23 @@ int main()
 		// Update
 		sf::Time frameTime = gameClock.restart();
 
-		// Update our animation
-		testAnimationSystem.Update(frameTime);
+		// Process all game objects
+		myPlayer.Update(frameTime);
 
 		// end update
 		// ----------
 
 		///////////////////
 		// Draw Everything
-		gameWindow.draw(testSprite);
-		gameWindow.draw(testText);
+
+
+		// Clear window to a single color
+		gameWindow.clear();
+
+		// Draw everything
+		myPlayer.Draw(gameWindow);
+
+		// Display game contents
 		gameWindow.display();
 
 		// end draw
